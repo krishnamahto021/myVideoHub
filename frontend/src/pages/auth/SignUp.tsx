@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import Layout from "../../components/Layout";
 import { AuthFormData } from "../../types";
+import { useDispatch } from "react-redux";
+import { signUpUser } from "../../reducers/auth/authReducer";
+import { AppDispatch } from "../../reducers/store";
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState<AuthFormData>({
     email: "",
     password: "",
   });
+  const dispatch = useDispatch<AppDispatch>();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -16,7 +20,7 @@ const SignUp: React.FC = () => {
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData.email, formData.password);
+    dispatch(signUpUser(formData));
   };
   return (
     <Layout>
