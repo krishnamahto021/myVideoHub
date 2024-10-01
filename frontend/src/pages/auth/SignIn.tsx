@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import Layout from "../../components/Layout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthFormData } from "../../types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../reducers/store";
-import { signInUser } from "../../reducers/auth/authReducer";
+import { selectLoading, signInUser } from "../../reducers/auth/authReducer";
 
 const SignIn: React.FC = () => {
   const [formData, setFormData] = useState<AuthFormData>({
     email: "",
     password: "",
   });
+  const loading = useSelector(selectLoading);
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,7 +24,7 @@ const SignIn: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email, password } = formData;
-    dispatch(signInUser({ email, password }));
+    dispatch(signInUser({ email, password, navigate }));
   };
   return (
     <Layout>
@@ -78,11 +80,38 @@ const SignIn: React.FC = () => {
 
             {/* Sign In Button with Loader */}
             <button
+              disabled={loading}
               type="submit"
               className={`w-full py-3 px-4 bg-green-500 text-white font-bold rounded-md shadow-md transition duration-300 
               disabled:bg-green-300 disabled:cursor-not-allowed flex items-center justify-center`}
             >
-              Sign In
+              {loading ? (
+                <>
+                  <svg
+                    className="animate-spin mr-2 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+                    ></path>
+                  </svg>
+                  Verifying...
+                </>
+              ) : (
+                "Sign In"
+              )}
             </button>
 
             <div className="text-center mt-4">
