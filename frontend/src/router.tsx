@@ -6,6 +6,8 @@ import {
   PortectedRoute,
   PortectedRouteHome,
 } from "./components/ProtectedRoute";
+import ResetPasswordEmail from "./pages/auth/ResetPasswordEmail";
+import UpdatePassword from "./pages/auth/UpdatePassword";
 
 export const router = createBrowserRouter([
   { path: "/sign-up", element: <PortectedRoute element={<SignUp />} /> },
@@ -13,5 +15,13 @@ export const router = createBrowserRouter([
   {
     path: "/user/profile",
     element: <PortectedRouteHome element={<UserProfile />} />,
+  },
+  {
+    path: "/reset-password",
+    element: <PortectedRoute element={<ResetPasswordEmail />} />,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <PortectedRoute element={<UpdatePassword />} />,
   },
 ]);
