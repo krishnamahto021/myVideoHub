@@ -4,7 +4,10 @@ import authRoute from "./authRoute";
 import userRoute from "./userRoute";
 import awsRoute from "./awsFileRoute";
 import passport from "passport";
+import { downloadVideo } from "../controller/aws/awsFileController";
 
+//downlaod rout
+router.get("/download/file/:id", downloadVideo);
 router.use("/auth", authRoute);
 router.use(
   "/user",
