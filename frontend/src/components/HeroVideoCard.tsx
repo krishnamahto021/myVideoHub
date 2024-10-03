@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { selectLoggedInUser } from "../reducers/auth/authReducer";
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "../reducers/store";
 import { downloadVideo, IVideo } from "../reducers/video/videoReducer";
 import ReactPlayer from "react-player";
@@ -26,7 +25,6 @@ const HeroVideoCard: React.FC<HeroVideoCardProps> = ({ video }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
-  const loggedInUser = useSelector(selectLoggedInUser);
   const dispatch = useDispatch<AppDispatch>();
   const videoRef = useRef<HTMLVideoElement | null>(null);
 

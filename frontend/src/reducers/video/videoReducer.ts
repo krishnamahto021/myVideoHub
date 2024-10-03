@@ -139,6 +139,27 @@ export const downloadVideo = createAsyncThunk<
   }
 });
 
+// deelting a given vdieo
+
+export const deleteVideo = createAsyncThunk<
+  { id: string },
+  { id: string; configWithJWT: ConfigWithJWT },
+  { rejectValue: string }
+>("ideo/delete", async ({ id, configWithJWT }, thunkApi) => {
+  try {
+    const { data } = await backendApi.delete<FileResponse>(
+      `/api/v1/aws/delete-single/video/${id}`,
+      configWithJWT
+    );
+    if (data.success) {
+      return { id };
+    }
+    return thunkApi.rejectWithValue(data.message);
+  } catch (error: any) {
+    return thunkApi.rejectWithValue(error);
+  }
+});
+
 const videoSlice = createSlice({
   name: "video",
   initialState,
@@ -164,6 +185,11 @@ const videoSlice = createSlice({
       })
       .addCase(fetchVideosForUser.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(deleteVideo.fulfilled, (state, action) => {
+        state.videos =
+          state.videos?.filter((video) => video._id !== action.payload.id) ||
+          null;
       });
   },
 });
