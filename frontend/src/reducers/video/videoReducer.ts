@@ -13,7 +13,7 @@ export interface IVideo {
     email: string;
   };
   isPrivate: boolean;
-  thumbnail: string;
+  thumbNail: string;
 }
 
 export interface EditVideo {
@@ -41,17 +41,16 @@ interface FileFetchPayload {
   configWithJwt: ConfigWithJWT;
 }
 
-// handling single File
-interface SingleFileResponse {
-  success: boolean;
-  message: string;
-  video?: IVideo;
-}
-
 interface FileResponse {
   success: boolean;
   message: string;
   videos?: IVideo[];
+}
+
+interface SingleFileResponse {
+  success: boolean;
+  message: string;
+  video?: IVideo;
 }
 
 const initialState: VideoState = {
@@ -160,10 +159,56 @@ export const deleteVideo = createAsyncThunk<
   }
 });
 
+// updating the video
+export const updateVideo = createAsyncThunk<
+  IVideo,
+  {
+    id: string;
+    updateData: Partial<EditVideo>;
+    configWithJwt: ConfigWithJWT;
+  },
+  { rejectValue: string }
+>("video/update", async ({ id, updateData, configWithJwt }, thunkAPI) => {
+  try {
+    const formData = new FormData();
+    if (updateData.path instanceof File) {
+      formData.append("video", updateData.path);
+    }
+    if (updateData.thumbnail instanceof File) {
+      formData.append("thumbnail", updateData.thumbnail);
+    }
+    if (updateData.title) formData.append("title", updateData.title);
+    if (updateData.description)
+      formData.append("description", updateData.description);
+    formData.append("isPrivate", String(updateData.isPrivate));
+    const { data } = await backendApi.put<SingleFileResponse>(
+      `/api/v1/aws/update-video/${id}`,
+      formData,
+      {
+        ...configWithJwt,
+        headers: {
+          ...configWithJwt.headers,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    if (data.success && data.video) {
+      toast.success(data.message);
+    }
+    return thunkAPI.rejectWithValue(data.message);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 const videoSlice = createSlice({
   name: "video",
   initialState,
-  reducers: {},
+  reducers: {
+    setEditVideo: (state, action) => {
+      state.editVideo = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchVideosForPublic.pending, (state) => {
@@ -195,7 +240,9 @@ const videoSlice = createSlice({
 });
 
 export const videoReducer = videoSlice.reducer;
+export const { setEditVideo } = videoSlice.actions;
 export const selectPublicVideos = (state: RootState) =>
   state.video.publicVideos;
 export const selectUserVideos = (state: RootState) => state.video.videos;
 export const selectVideoLoading = (state: RootState) => state.video.isLoading;
+export const selectEditingVideo = (state: RootState) => state.video.editVideo;

@@ -11,7 +11,7 @@ import { FaExternalLinkAlt, FaShareAlt } from "react-icons/fa";
 import ReactPlayer from "react-player";
 import { useDispatch } from "react-redux";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { FaChalkboardUser } from "react-icons/fa6";
@@ -22,6 +22,7 @@ import {
   deleteVideo,
   downloadVideo,
   IVideo,
+  setEditVideo,
 } from "../reducers/video/videoReducer";
 import { useConfig } from "../customHooks/useConfigHook";
 
@@ -30,13 +31,14 @@ interface VideoCardProps {
 }
 
 const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
-  const { _id, title, description, isPrivate, path, thumbnail, uploadedBy } =
+  const { _id, title, description, isPrivate, path, thumbNail, uploadedBy } =
     video;
 
   const dispatch = useDispatch<AppDispatch>();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [loading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
   const { configWithJWT } = useConfig();
   const handleDownload = async () => {
     try {
@@ -73,6 +75,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
     }
   };
 
+  // hadnle edit
+  const handleEditClick = () => {
+    dispatch(setEditVideo(video));
+    navigate("/user/edit/my-video");
+  };
+
   return (
     <div className="border border-gray-300 rounded-lg shadow-sm  bg-white relative hover:shadow-md transition-shadow duration-300 ease-in-out m-2 w-full h-auto flex flex-col sm:flex-row gap-4">
       <div className="leftContainer w-full sm:w-1/3 relative">
@@ -94,7 +102,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         >
           <ReactPlayer
             url={path}
-            light={thumbnail}
+            light={thumbNail}
             width={"100%"}
             height={"100%"}
             controls={isPlaying}
@@ -175,6 +183,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
               <button
                 type="button"
                 className="bg-green-500 text-white rounded-md p-2 text-sm hover:bg-opacity-90 transition duration-200"
+                onClick={handleEditClick}
               >
                 <FaEdit className="inline-block mr-1" /> Edit
               </button>

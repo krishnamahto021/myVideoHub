@@ -6,8 +6,6 @@ import {
 } from "../../reducers/video/videoReducer";
 import { useConfig } from "../../customHooks/useConfigHook";
 import { AppDispatch } from "../../reducers/store";
-import Layout from "../../components/Layout";
-import HeroVideoCard from "../../components/HeroVideoCard";
 import SideBar from "../../components/SideBar";
 import VideoCard from "../../components/VideoCard";
 
