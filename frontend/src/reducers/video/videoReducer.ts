@@ -62,6 +62,28 @@ const initialState: VideoState = {
   editVideo: null,
 };
 
+// fetch videos for the loggedin users
+export const fetchVideosForUser = createAsyncThunk<
+  IVideo[],
+  FileFetchPayload,
+  { rejectValue: String }
+>("/video/fetch-user-videos", async (payload, thunkapi) => {
+  try {
+    const { configWithJwt } = payload;
+    const { data } = await backendApi.get<FileResponse>(
+      "/api/v1/aws/fetch-videos",
+      configWithJwt
+    );
+    if (data.success) {
+      return data.videos || [];
+    }
+    return thunkapi.rejectWithValue(data.message);
+  } catch (error: any) {
+    const errMessage = error.response?.data?.message || "Somewthign went wrong";
+    return thunkapi.rejectWithValue(errMessage);
+  }
+});
+
 // fetch vidoes for the public
 export const fetchVideosForPublic = createAsyncThunk<
   IVideo[],
@@ -132,6 +154,16 @@ const videoSlice = createSlice({
       })
       .addCase(fetchVideosForPublic.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(fetchVideosForUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchVideosForUser.fulfilled, (state, action) => {
+        state.videos = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(fetchVideosForUser.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });
@@ -139,4 +171,5 @@ const videoSlice = createSlice({
 export const videoReducer = videoSlice.reducer;
 export const selectPublicVideos = (state: RootState) =>
   state.video.publicVideos;
+export const selectUserVideos = (state: RootState) => state.video.videos;
 export const selectVideoLoading = (state: RootState) => state.video.isLoading;

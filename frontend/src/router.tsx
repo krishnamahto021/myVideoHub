@@ -12,6 +12,7 @@ import Upload from "./pages/user/Upload";
 import AllVideos from "./pages/AllVideos";
 import Home from "./pages/Home";
 import SingleVideoPage from "./pages/SingleVideoPage";
+import MyVideos from "./pages/user/MyVideos";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
   {
     path: "/user/profile",
     element: <PortectedRouteHome element={<UserProfile />} />,
+  },
+  {
+    path: "/user/edit/my-videos",
+    element: <PortectedRouteHome element={<MyVideos />} />,
   },
   {
     path: "/user/upload-video",
