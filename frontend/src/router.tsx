@@ -11,9 +11,11 @@ import UpdatePassword from "./pages/auth/UpdatePassword";
 import Upload from "./pages/user/Upload";
 import AllVideos from "./pages/AllVideos";
 import Home from "./pages/Home";
+import SingleVideoPage from "./pages/SingleVideoPage";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
+  { path: "/video/:id", element: <SingleVideoPage /> },
   { path: "/sign-up", element: <PortectedRoute element={<SignUp />} /> },
   { path: "/sign-in", element: <PortectedRoute element={<SignIn />} /> },
   {

@@ -81,6 +81,42 @@ export const fetchVideosForPublic = createAsyncThunk<
   }
 });
 
+// downloading of a gvien video
+export const downloadVideo = createAsyncThunk<
+  void,
+  { id: string },
+  { rejectValue: string }
+>("video/download", async (payload, thunkAPI) => {
+  try {
+    const { id } = payload;
+    const state = thunkAPI.getState() as RootState;
+    const queryParams = state.auth.loggedInUser
+      ? `?userId=${encodeURIComponent(state.auth.loggedInUser._id)}`
+      : "";
+    const response = await backendApi.get(
+      `/api/v1/download/file/${id}${queryParams}`,
+      {
+        responseType: "blob",
+      }
+    );
+    const contentDisposition = response.headers["content-disposition"];
+    const filename = contentDisposition
+      ? contentDisposition.split("filename=")[1].replace(/['"]/g, "")
+      : "video.mp4";
+    const blob = new Blob([response.data], {
+      type: response.headers["content-type"],
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 const videoSlice = createSlice({
   name: "video",
   initialState,

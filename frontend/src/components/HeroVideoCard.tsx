@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectLoggedInUser } from "../reducers/auth/authReducer";
 import { AppDispatch } from "../reducers/store";
-import { IVideo } from "../reducers/video/videoReducer";
+import { downloadVideo, IVideo } from "../reducers/video/videoReducer";
 import ReactPlayer from "react-player";
 import {
   FaDownload,
@@ -57,6 +57,18 @@ const HeroVideoCard: React.FC<HeroVideoCardProps> = ({ video }) => {
     return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
+  // handle downlaod
+  const handleDownload = async () => {
+    try {
+      setIsLoading(true);
+      await dispatch(downloadVideo({ id: video._id }));
+    } catch (error) {
+      toast.error(`Failed to download video`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div
       className="heroVideoCard flex flex-col gap-2  relative bg-white rounded-md m-2 h-52"
@@ -100,6 +112,7 @@ const HeroVideoCard: React.FC<HeroVideoCardProps> = ({ video }) => {
               <FaDownload
                 size={20}
                 className="text-white cursor-pointer absolute bottom-2 left-2 hover:text-gray-300 transition duration-200"
+                onClick={handleDownload}
               />
             )}
             <Link to={`/video/${video._id}`}>
