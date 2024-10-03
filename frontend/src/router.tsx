@@ -9,8 +9,11 @@ import {
 import ResetPasswordEmail from "./pages/auth/ResetPasswordEmail";
 import UpdatePassword from "./pages/auth/UpdatePassword";
 import Upload from "./pages/user/Upload";
+import AllVideos from "./pages/AllVideos";
+import Home from "./pages/Home";
 
 export const router = createBrowserRouter([
+  { path: "/", element: <Home /> },
   { path: "/sign-up", element: <PortectedRoute element={<SignUp />} /> },
   { path: "/sign-in", element: <PortectedRoute element={<SignIn />} /> },
   {
@@ -21,6 +24,7 @@ export const router = createBrowserRouter([
     path: "/user/upload-video",
     element: <PortectedRouteHome element={<Upload />} />,
   },
+  { path: "/all-videos", element: <AllVideos /> },
   {
     path: "/reset-password",
     element: <PortectedRoute element={<ResetPasswordEmail />} />,

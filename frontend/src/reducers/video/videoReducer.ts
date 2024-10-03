@@ -69,9 +69,7 @@ export const fetchVideosForPublic = createAsyncThunk<
   { rejectValue: string }
 >("/videos/fetch-public-videos", async (_, thunkAPI) => {
   try {
-    const { data } = await backendApi.get<FileResponse>(
-      "/api/v1/aws/fetch-videos"
-    );
+    const { data } = await backendApi.get<FileResponse>("/api/v1/fetch-videos");
     if (data.success) {
       return data.videos || [];
     }
@@ -105,3 +103,4 @@ const videoSlice = createSlice({
 export const videoReducer = videoSlice.reducer;
 export const selectPublicVideos = (state: RootState) =>
   state.video.publicVideos;
+export const selectVideoLoading = (state: RootState) => state.video.isLoading;
