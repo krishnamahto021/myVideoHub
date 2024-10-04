@@ -201,6 +201,26 @@ export const updateVideo = createAsyncThunk<
   }
 });
 
+// search of videos
+export const getSearchResults = createAsyncThunk<
+  IVideo[],
+  string,
+  { rejectValue: string; state: RootState }
+>("video/search", async (query, thunkApi) => {
+  try {
+    const { publicVideos, videos } = thunkApi.getState().video;
+    const combinedVideos = [...(publicVideos || []), ...(videos || [])];
+    const filteredVideos = combinedVideos.filter(
+      (video) =>
+        video.title?.toLowerCase().includes(query.toLowerCase()) ||
+        video.description?.toLowerCase().includes(query.toLowerCase())
+    );
+    return filteredVideos;
+  } catch (error: any) {
+    return thunkApi.rejectWithValue(error);
+  }
+});
+
 const videoSlice = createSlice({
   name: "video",
   initialState,
@@ -235,6 +255,9 @@ const videoSlice = createSlice({
         state.videos =
           state.videos?.filter((video) => video._id !== action.payload.id) ||
           null;
+      })
+      .addCase(getSearchResults.fulfilled, (state, action) => {
+        state.searchResults = action.payload;
       });
   },
 });
@@ -246,3 +269,5 @@ export const selectPublicVideos = (state: RootState) =>
 export const selectUserVideos = (state: RootState) => state.video.videos;
 export const selectVideoLoading = (state: RootState) => state.video.isLoading;
 export const selectEditingVideo = (state: RootState) => state.video.editVideo;
+export const selectSearchResults = (state: RootState) =>
+  state.video.searchResults;
