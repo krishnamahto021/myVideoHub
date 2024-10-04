@@ -53,7 +53,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   };
 
   const handleShare = () => {
-    const videoLink = `http://localhost:5173/video/${_id}`;
+    const videoLink = `https://my-video-hub.vercel.app/video/${_id}`;
     navigator.clipboard.writeText(videoLink).then(() => {
       toast.success(`Link copied to clipboard`);
     });
