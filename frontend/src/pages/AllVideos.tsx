@@ -7,13 +7,16 @@ import {
   getSearchResults,
   selectPublicVideos,
   selectSearchResults,
+  selectVideoLoading,
 } from "../reducers/video/videoReducer";
 import HeroVideoCard from "../components/HeroVideoCard";
+import Skeleton from "react-loading-skeleton";
 
 const AllVideos: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const searchResults = useSelector(selectSearchResults);
+  const isLoading = useSelector(selectVideoLoading);
   const dispatch = useDispatch<AppDispatch>();
   const publicVideos = useSelector(selectPublicVideos);
   useEffect(() => {
@@ -50,6 +53,17 @@ const AllVideos: React.FC = () => {
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
                 {searchResults?.map((video) => (
                   <HeroVideoCard key={video._id} video={video} />
+                ))}
+              </div>
+            ) : isLoading ? (
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(8)].map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    height={300}
+                    width={200}
+                    className="rounded-lg"
+                  />
                 ))}
               </div>
             ) : (
